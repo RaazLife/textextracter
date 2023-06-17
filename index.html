@@ -73,6 +73,26 @@
       cursor: pointer;
       margin-left: 10px;
     }
+
+    .loader {
+      border: 4px solid #f3f3f3;
+      border-top: 4px solid #3498db;
+      border-radius: 50%;
+      width: 20px;
+      height: 20px;
+      animation: spin 1s linear infinite;
+      display: none;
+      margin: 0 auto;
+    }
+
+    @keyframes spin {
+      0% {
+        transform: rotate(0deg);
+      }
+      100% {
+        transform: rotate(360deg);
+      }
+    }
   </style>
 </head>
 <body>
@@ -93,11 +113,24 @@
     <div class="button-container">
       <button class="extract-btn" id="extract-btn">Extract Text</button>
       <button class="copy-btn" id="copy-btn">Copy</button>
+      <div id="loader" class="loader"></div>
     </div>
   </div>
 
   <script type="module">
     import Tesseract from 'https://cdn.skypack.dev/tesseract.js';
+
+    // Function to show the loading spinner
+    function showLoader() {
+      var spinner = document.getElementById("loader");
+      spinner.style.display = "block";
+    }
+
+    // Function to hide the loading spinner
+    function hideLoader() {
+      var spinner = document.getElementById("loader");
+      spinner.style.display = "none";
+    }
 
     // Function to handle image upload
     function handleImageUpload(e) {
@@ -128,12 +161,16 @@
         return;
       }
 
+      showLoader(); // Show the loading spinner
+
       Tesseract.recognize(previewImage.src, 'eng', { logger: m => console.log(m) })
         .then(function (result) {
           extractedText.value = result.data.text;
+          hideLoader(); // Hide the loading spinner
         })
         .catch(function (error) {
           console.error(error);
+          hideLoader(); // Hide the loading spinner
         });
     }
 
